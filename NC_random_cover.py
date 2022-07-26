@@ -152,9 +152,9 @@ def majorana_to_pauli_dict(majorana_list, qubit_mapping='jw'):
     for majorana in majorana_list:
         
         if qubit_mapping == 'jw':
-            op = jordan_wigner(MajoranaOperator(mu))
+            op = jordan_wigner(MajoranaOperator(majorana))
         elif qubit_mapping == 'bk':
-            op = bravyi_kitaev(MajoranaOperator(mu))
+            op = bravyi_kitaev(MajoranaOperator(majorana))
         else:
             raise NotImplementedError(
                 'Only jw and bk mappings currently supported.')
@@ -197,14 +197,14 @@ def construct_random_measurements_NC(ops_dict, map_dict, n, r=10):
     while any(counts < r for counts in ops_dict.values()):
         u = rand_alt_perm(n)
         pauli_measurement = rand_pauli_string(n)
-        if (u, pauli_measurement) in random_measurements:
+        if (u, tuple(pauli_measurement)) in random_measurements:
             continue
         
         measured_ops = tally_pauli_matches(ops_dict, map_dict, u,
                                            pauli_measurement)
         
         if len(measured_ops) > 0:
-            random_measurements[(u, pauli_measurement)] = measured_ops
+            random_measurements[(u, tuple(pauli_measurement))] = measured_ops
     
     return random_measurements
 
